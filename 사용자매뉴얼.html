@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>이메일 AI 답장 도우미 - 사용 매뉴얼</title>
+<style>
+  body {
+    font-family: -apple-system, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    max-width: 760px; margin: 0 auto; padding: 40px 24px 80px;
+    color: #2b2b2b; line-height: 1.7; background: #fdfcfa;
+  }
+  h1 { font-size: 26px; margin-bottom: 4px; }
+  .subtitle { color: #777; margin-bottom: 30px; }
+  h2 { font-size: 19px; margin-top: 48px; padding-bottom: 8px; border-bottom: 2px solid #2d6a4f; color: #1b4332; }
+  h3 { font-size: 16px; margin-top: 28px; color: #2d6a4f; }
+  .step { display: flex; gap: 14px; margin: 16px 0; padding: 14px 16px; background: #f4f7f5; border-radius: 10px; align-items: flex-start; }
+  .step-num { flex: none; width: 28px; height: 28px; background: #2d6a4f; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
+  .step-content { flex: 1; }
+  code { background: #eceae5; padding: 2px 6px; border-radius: 4px; font-size: 13.5px; }
+  .warn { background: #fff3cd; border: 1px solid #ffe08a; border-left: 4px solid #e0a800; border-radius: 6px; padding: 12px 16px; margin: 16px 0; }
+  .tip { background: #e7f3ec; border-left: 4px solid #2d6a4f; border-radius: 6px; padding: 12px 16px; margin: 16px 0; }
+  .toc { background: #f4f7f5; border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+  .toc a { color: #2d6a4f; text-decoration: none; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e5e2da; font-size: 14px; }
+  th { color: #777; font-weight: 600; }
+  .faq-q { font-weight: 600; margin-top: 18px; }
+  footer { margin-top: 60px; color: #999; font-size: 13px; text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>👤 이메일 AI 답장 도우미</h1>
+<div class="subtitle">사용 매뉴얼 — 설치부터 답장 발송까지</div>
+
+<div class="toc">
+  <strong>목차</strong>
+  <ol>
+    <li><a href="#start">시작하기 전에</a></li>
+    <li><a href="#install">설치하기</a></li>
+    <li><a href="#setup">처음 실행하기</a></li>
+    <li><a href="#use">메일 확인하고 답장하기</a></li>
+    <li><a href="#faq">자주 묻는 질문</a></li>
+  </ol>
+</div>
+
+<h2 id="start">1. 시작하기 전에</h2>
+<p>어떤 AI 모델을 쓸지에 따라 미리 준비할 게 다릅니다.</p>
+<table>
+  <tr><th>사용할 모델</th><th>필요한 것</th><th>비용</th></tr>
+  <tr><td>Ollama</td><td>Ollama 프로그램 설치 (아래 안내)</td><td>무료</td></tr>
+  <tr><td>Claude (API 키)</td><td>Anthropic API 키</td><td>사용량만큼 소액 과금</td></tr>
+  <tr><td>GPT</td><td>OpenAI API 키</td><td>사용량만큼 소액 과금</td></tr>
+  <tr><td>Gemini</td><td>Google API 키</td><td>사용량만큼 소액 과금</td></tr>
+</table>
+
+<div class="warn">
+⚠️ 설정 화면에서 "Claude Pro/Max (구독)" 항목이 보이더라도 <strong>선택하지 마세요.</strong>
+이 옵션은 만든 사람 개인 컴퓨터에서만 쓰도록 되어 있습니다. 대신 "Claude (API 키)"를 사용하세요.
+</div>
+
+<h2 id="install">2. 설치하기</h2>
+<div class="step"><div class="step-num">1</div><div class="step-content">
+  관리자에게 받은 설치파일 다운로드: Windows <code>.exe</code> 또는 Mac <code>.dmg</code>
+</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content">
+  더블클릭해서 설치 진행 (일반 프로그램 설치와 동일)
+</div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content">
+  설치 후 바탕화면/시작메뉴의 <strong>"이메일 AI 답장 도우미"</strong> 아이콘 실행
+</div></div>
+<div class="tip">💡 Node.js, Python, VSCode 등은 전혀 설치하지 않아도 됩니다.</div>
+
+<h3>Ollama를 쓰실 경우에만 추가로</h3>
+<div class="step"><div class="step-num">1</div><div class="step-content"><a href="https://ollama.com" target="_blank">ollama.com</a>에서 Ollama 설치</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content">설치 후 터미널에서 한 번만: <code>ollama pull llama3.1</code></div></div>
+
+<h2 id="setup">3. 처음 실행하기 (순서대로 진행됨)</h2>
+<div class="step"><div class="step-num">1</div><div class="step-content">
+  <strong>Gmail 로그인</strong> — "Gmail로 로그인" 버튼 클릭 → 브라우저에서 본인 구글 계정 선택/로그인 →
+  권한 허용 (입력할 것 없음, 클릭만 하면 됨)
+</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content">
+  <strong>AI 모델 선택</strong> — Ollama/Claude/GPT/Gemini 중 선택 후 필요한 키 입력 → 저장
+</div></div>
+<p>두 단계가 끝나면 받은메일 화면이 열립니다.</p>
+
+<h3>API 키는 어디서 받나요?</h3>
+<table>
+  <tr><th>모델</th><th>발급 페이지</th></tr>
+  <tr><td>Claude</td><td>console.anthropic.com → API Keys</td></tr>
+  <tr><td>GPT</td><td>platform.openai.com/api-keys</td></tr>
+  <tr><td>Gemini</td><td>aistudio.google.com/apikey</td></tr>
+</table>
+
+<h2 id="use">4. 메일 확인하고 답장하기</h2>
+<div class="step"><div class="step-num">1</div><div class="step-content">왼쪽 목록에서 메일 클릭 → 오른쪽 읽기창에 원본 내용 표시</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><strong>"✨ AI 답장 초안 생성"</strong> 버튼 클릭 → 분류/요약과 답장 초안이 나타남</div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content">초안을 <strong>직접 읽고 필요하면 수정</strong></div></div>
+<div class="step"><div class="step-num">4</div><div class="step-content">내용이 괜찮으면 <strong>"보내기"</strong> 클릭 → 실제로 발송됨</div></div>
+
+<div class="warn">
+⚠️ "보내기"를 누르면 <strong>바로 실제 발송</strong>됩니다 (임시보관함이 아님). 발송 전 반드시 내용을 확인하세요.
+</div>
+
+<h2 id="faq">5. 자주 묻는 질문</h2>
+
+<div class="faq-q">Q. 다시 분석하고 싶어요.</div>
+<p>A. "다시 분석" 버튼을 누르면 같은 메일을 다시 분석해서 새 초안을 만듭니다.</p>
+
+<div class="faq-q">Q. Outlook에서 메일을 보는데 왜 Gmail로 로그인하나요?</div>
+<p>A. 실제 메일이 저장되는 곳이 Gmail 서버이기 때문입니다. Outlook은 그걸 보는 화면일 뿐이라,
+Gmail로 인증해서 처리하면 Outlook에서도 동일하게 반영됩니다.</p>
+
+<div class="faq-q">Q. "확인되지 않은 앱" 경고가 뜨는데 계속해도 되나요?</div>
+<p>A. 관리자가 회원님의 계정에 접근 권한을 미리 설정해뒀다면 "고급" → "이동" 클릭 후 진행하면 됩니다.
+계속 뜬다면 관리자에게 문의하세요.</p>
+
+<div class="faq-q">Q. 비용이 얼마나 드나요?</div>
+<p>A. Ollama는 무료입니다. API 키 방식은 이메일 한 통 분석당 비용이 매우 적어서, 하루 수십~백 통을
+처리해도 실제 청구 금액은 크지 않습니다.</p>
+
+<footer>이메일 AI 답장 도우미 · 사용 매뉴얼</footer>
+
+</body>
+</html>

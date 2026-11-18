@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>이메일 AI 답장 도우미 - 개발자 매뉴얼</title>
+<style>
+  body {
+    font-family: -apple-system, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    max-width: 780px; margin: 0 auto; padding: 40px 24px 80px;
+    color: #2b2b2b; line-height: 1.7; background: #fdfcfa;
+  }
+  h1 { font-size: 26px; margin-bottom: 4px; }
+  .subtitle { color: #777; margin-bottom: 30px; }
+  h2 { font-size: 20px; margin-top: 52px; padding-bottom: 8px; border-bottom: 2px solid #1b5fa8; color: #0c447c; }
+  h3 { font-size: 16px; margin-top: 26px; color: #1b5fa8; }
+  .step { display: flex; gap: 14px; margin: 14px 0; padding: 14px 16px; background: #f2f6fb; border-radius: 10px; align-items: flex-start; }
+  .step-num { flex: none; width: 26px; height: 26px; background: #1b5fa8; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; }
+  .step-content { flex: 1; }
+  pre { background: #2b2b2b; color: #eee; padding: 12px 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
+  code { background: #e6edf5; padding: 2px 6px; border-radius: 4px; font-size: 13.5px; }
+  pre code { background: none; padding: 0; }
+  .warn { background: #fff3cd; border-left: 4px solid #e0a800; border-radius: 6px; padding: 12px 16px; margin: 16px 0; }
+  .tip { background: #e6f1fb; border-left: 4px solid #1b5fa8; border-radius: 6px; padding: 12px 16px; margin: 16px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e5e2da; font-size: 14px; }
+  th { color: #777; font-weight: 600; }
+  .toc { background: #f2f6fb; border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+  .toc a { color: #1b5fa8; text-decoration: none; }
+  footer { margin-top: 60px; color: #999; font-size: 13px; text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>🛠 이메일 AI 답장 도우미</h1>
+<div class="subtitle">개발자 매뉴얼 — 실행 · 빌드 · Google Cloud 설정</div>
+
+<div class="toc">
+  <strong>목차</strong>
+  <ol>
+    <li><a href="#run">개발 모드 실행</a></li>
+    <li><a href="#build">배포용 설치파일 만들기</a></li>
+    <li><a href="#gcloud">Google Cloud 설정 (Gmail 연동 준비)</a></li>
+    <li><a href="#extend">새 AI 모델 추가하는 법</a></li>
+    <li><a href="#trouble">문제 해결</a></li>
+  </ol>
+</div>
+
+<h2 id="run">1. 개발 모드 실행</h2>
+<div class="step"><div class="step-num">1</div><div class="step-content">
+  <a href="https://nodejs.org" target="_blank">nodejs.org</a>에서 <strong>LTS 버전</strong> 설치
+</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content">
+  터미널에서 프로젝트 폴더로 이동 후:
+  <pre><code>npm install
+npm run dev</code></pre>
+  Electron 창이 뜨면 성공입니다.
+</div></div>
+
+<h2 id="build">2. 배포용 설치파일 만들기</h2>
+<pre><code>npm run dist:win    # Windows용 .exe → release/ 폴더
+npm run dist:mac     # Mac용 .dmg (Mac에서 실행 필요)</code></pre>
+<div class="tip">💡 빌드 전에 반드시 <code>electron/googleCredentials.ts</code>를 채워야 합니다 (아래 3번 항목 참고). 안 채우고 빌드하면 사용자가 Gmail 로그인을 할 수 없습니다.</div>
+
+<h2 id="gcloud">3. Google Cloud 설정 (Gmail 연동 준비, 최초 1회)</h2>
+
+<div class="warn">
+⚠️ Google Cloud Console이 최근 UI를 개편해서, 계정에 따라 화면 이름이 다르게 보일 수 있습니다.
+아래 표를 참고하세요.
+<table>
+  <tr><th>새 UI 이름</th><th>옛 UI 이름 (화면에 이렇게 보일 수 있음)</th></tr>
+  <tr><td>Google 인증 플랫폼</td><td>OAuth 동의 화면</td></tr>
+  <tr><td>클라이언트 (Clients)</td><td>사용자 인증 정보</td></tr>
+</table>
+</div>
+
+<h3>3-1. 프로젝트 생성 + Gmail API 활성화</h3>
+<div class="step"><div class="step-num">1</div><div class="step-content">
+  <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> 접속
+</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content">
+  화면 맨 위 왼쪽 프로젝트 선택기 → <strong>"새 프로젝트"</strong> → 이름 입력 → 만들기 → 만든 프로젝트로 전환
+</div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content">
+  왼쪽 <strong>☰ 메뉴 → API 및 서비스 → 라이브러리</strong> → <code>Gmail API</code> 검색 → 클릭 → <strong>"사용"</strong>
+</div></div>
+
+<h3>3-2. OAuth 동의 화면(Google 인증 플랫폼) 설정</h3>
+<div class="step"><div class="step-num">1</div><div class="step-content">
+  왼쪽 메뉴 → API 및 서비스 → <strong>"OAuth 동의 화면"</strong>(= Google 인증 플랫폼) 클릭
+</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content">
+  <strong>사용자 유형</strong>을 확인합니다 (좌측 메뉴의 "대상" 탭에서 확인 가능):
+  <table>
+    <tr><th>사용자 유형</th><th>의미</th><th>다음 단계</th></tr>
+    <tr><td><strong>내부</strong></td><td>회사 Google Workspace 조직(예: @회사도메인) 계정만 사용, 자동 허용</td><td>테스트 사용자 등록 <strong>불필요</strong> → 3-3 생략, 바로 3-4로</td></tr>
+    <tr><td><strong>외부</strong></td><td>개인 Gmail 등 조직 밖 계정도 포함 가능</td><td>테스트 사용자를 직접 등록해야 함 (아래 3-3)</td></tr>
+  </table>
+</div></div>
+
+<div class="tip">
+💡 동료들이 전부 회사 Google Workspace 계정(예: @회사도메인.com)을 쓴다면 <strong>"내부"</strong>가 더 편합니다.
+100명 제한도 없고 테스트 사용자를 한 명씩 등록할 필요도 없습니다. "외부로 설정" 버튼은 누르지 마세요.
+</div>
+
+<h3>3-3. 테스트 사용자 등록 (사용자 유형이 "외부"인 경우만)</h3>
+<div class="step"><div class="step-num">1</div><div class="step-content">
+  "OAuth 동의 화면" 페이지에서 <strong>"테스트 사용자"</strong> 항목까지 스크롤
+</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content">
+  <strong>"사용자 추가"</strong> 클릭 → 실제로 쓸 동료들의 Gmail 주소를 한 명씩 입력 → 저장
+</div></div>
+
+<h3>3-4. OAuth 클라이언트 ID 발급</h3>
+<div class="step"><div class="step-num">1</div><div class="step-content">
+  왼쪽 메뉴 → <strong>"사용자 인증 정보"</strong> (새 UI에서는 "클라이언트") 클릭
+</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content">
+  <strong>"+ 사용자 인증 정보 만들기"</strong> (또는 "+ 클라이언트 만들기") → <strong>"OAuth 클라이언트 ID"</strong> 선택
+</div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content">
+  <strong>애플리케이션 유형: "데스크톱 앱"</strong> 선택 → 이름 입력 (예: 이메일AI답장도우미) → <strong>"만들기"</strong>
+</div></div>
+<div class="step"><div class="step-num">4</div><div class="step-content">
+  화면에 표시되는 <strong>클라이언트 ID / 클라이언트 보안 비밀번호</strong>를 바로 복사해두세요
+  (보안 비밀번호는 나중에 다시 확인이 어려울 수 있습니다)
+</div></div>
+
+<h3>3-5. 코드에 붙여넣기</h3>
+<p><code>electron/googleCredentials.ts</code> 파일을 열어서:</p>
+<pre><code>export const GOOGLE_CLIENT_ID = "복사한 클라이언트 ID";
+export const GOOGLE_CLIENT_SECRET = "복사한 클라이언트 보안 비밀번호";</code></pre>
+<p>저장 후 이 상태로 <code>npm run dist:win</code> / <code>dist:mac</code>으로 빌드하면 값이 설치파일에 포함됩니다.
+사용자는 이 값을 절대 입력하지 않고, "Gmail로 로그인" 버튼만 누르면 됩니다.</p>
+
+<h2 id="extend">4. 새 AI 모델 추가하는 법</h2>
+<ol>
+  <li><code>electron/providers/새모델.ts</code>에 <code>AIProvider</code> 인터페이스 구현</li>
+  <li><code>electron/providers/index.ts</code>의 <code>getProvider()</code>에 case 추가</li>
+  <li><code>electron/providers/types.ts</code>의 <code>ProviderId</code>/<code>ProviderSettings</code>에 타입 추가</li>
+  <li><code>src/Settings.tsx</code>에 선택 옵션 추가</li>
+</ol>
+
+<h2 id="trouble">5. 문제 해결</h2>
+<table>
+  <tr><th>증상</th><th>원인/해결</th></tr>
+  <tr><td><code>electron</code> 명령을 찾을 수 없음</td><td><code>node_modules</code> 삭제 후 <code>npm install</code> 재시도</td></tr>
+  <tr><td>Gmail 인증 창이 안 열림</td><td>방화벽이 <code>localhost:8721</code> 차단 → 예외 추가</td></tr>
+  <tr><td>"확인되지 않은 앱" 경고</td><td>사용자 유형이 "외부"인데 그 계정이 테스트 사용자로 등록 안 됨 → 3-3 진행, 또는 "내부"로 전환 검토</td></tr>
+  <tr><td>Client ID 관련 에러로 로그인 실패</td><td><code>electron/googleCredentials.ts</code>를 채우지 않고 빌드했을 가능성 → 값 채운 뒤 재빌드</td></tr>
+</table>
+
+<footer>이메일 AI 답장 도우미 · 개발자 매뉴얼</footer>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+{
+  "name": "email-ai-responder",
+  "version": "1.0.0",
+  "description": "Gmail 이메일을 AI로 분석하고 답장 초안을 만들어주는 데스크톱 앱",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:vite\" \"npm:dev:electron\"",
+    "dev:vite": "vite",
+    "dev:electron": "tsc -p electron && wait-on tcp:5173 && cross-env VITE_DEV_SERVER_URL=http://localhost:5173 electron .",
+    "build": "vite build && tsc -p electron",
+    "dist:win": "npm run build && electron-builder --win",
+    "dist:mac": "npm run build && electron-builder --mac"
+  },
+  "build": {
+    "appId": "com.plantasset.emailairesponder",
+    "productName": "이메일 AI 답장 도우미",
+    "icon": "build/icon.png",
+    "files": ["dist/**", "dist-electron/**"],
+    "win": { "target": "nsis" },
+    "mac": { "target": "dmg" },
+    "directories": { "output": "release" }
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "googleapis": "^140.0.1",
+    "@anthropic-ai/sdk": "^0.27.0",
+    "@anthropic-ai/claude-agent-sdk": "^0.1.0",
+    "openai": "^4.55.0",
+    "@google/generative-ai": "^0.17.0",
+    "electron-store": "^8.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^31.3.0",
+    "electron-builder": "^24.13.3",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.0",
+    "wait-on": "^7.2.0"
+  }
+}
