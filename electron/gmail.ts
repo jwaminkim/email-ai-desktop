@@ -378,7 +378,7 @@ export async function sendReply(
   // ⚠️⚠️⚠️ 임시 테스트 오버라이드 (2026-08-14) ⚠️⚠️⚠️
   // 발송 테스트를 위해 실제 수신자(realTo) 대신 테스트 주소로 강제 발송 중.
   // 사용자가 "원복해달라"고 요청하면 아래 한 줄을 지우고 `const to = realTo;`로 되돌릴 것.
-  const to = "xxxx";
+  const to = realTo;
 
   const subject = original.subject.startsWith("Re:") ? original.subject : `Re: ${original.subject}`;
 
